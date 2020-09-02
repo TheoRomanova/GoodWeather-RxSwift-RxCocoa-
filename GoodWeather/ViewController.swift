@@ -45,16 +45,15 @@ class ViewController: UIViewController {
         
         let search = URLRequest.load(resource: resource)
             .observeOn(MainScheduler.instance) //instead DQ.main.asyhc..
-            .catchErrorJustReturn(WeatherResult.empty)
+            .asDriver(onErrorJustReturn: WeatherResult.empty)
         
         search.map { "\($0.main.temp)℉" }
-            .bind(to: self.temperatureLabel.rx.text)
+            .drive(self.temperatureLabel.rx.text)
             .disposed(by: disposeBag)
         
         search.map { "\($0.main.hymidity)💦" }
-        .bind(to: self.humidityLabel.rx.text)
-        .disposed(by: disposeBag)
-        
+            .drive(self.humidityLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     private func displayWeather(_ weather: Weather?) {
